@@ -1,11 +1,9 @@
 import { useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import api from '../services/api';
-import { useNavigate } from 'react-router-dom';
 
-const AddQuestion = () => {
+const AddQuestionPopup = ({ onClose, onQuestionAdded }) => {
   const { token } = useContext(AuthContext);
-  const navigate = useNavigate();
 
   const [title, setTitle] = useState('');
   const [topic, setTopic] = useState('');
@@ -25,7 +23,6 @@ const AddQuestion = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validation to ensure values are from allowed sets
     if (!topicOptions.includes(topic)) {
       alert("❌ Invalid topic. Please choose from the suggestions.");
       return;
@@ -45,76 +42,85 @@ const AddQuestion = () => {
         },
       });
 
-      navigate('/home');
+      alert('✅ Question added');
+      onQuestionAdded?.(); // refresh if callback passed
+      onClose();
     } catch (err) {
-      console.error('Error adding question:', err);
+      console.error('❌ Error adding question:', err.response?.data || err.message);
       alert('Failed to add question');
     }
   };
 
   return (
-    <div style={{ padding: '1rem' }}>
-      <h2>Add New Question</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Title:</label><br />
+    <div style={{
+      position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+      backgroundColor: 'rgba(0, 0, 0, 0.5)', display: 'flex',
+      justifyContent: 'center', alignItems: 'center', zIndex: 9999
+    }}>
+      <div style={{
+        backgroundColor: '#1b5992', padding: '2rem', borderRadius: '12px',
+        width: '90%', maxWidth: '500px', boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
+      }}>
+        <h3 style={{ marginBottom: '1rem' }}>➕ Add New Question</h3>
+        <form onSubmit={handleSubmit}>
           <input
             type="text"
+            placeholder="Title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
+            style={{ width: '100%', marginBottom: '1rem' }}
           />
-        </div>
 
-        <div>
-          <label>Topic:</label><br />
           <input
             list="topicList"
+            placeholder="Topic"
             value={topic}
             onChange={(e) => setTopic(e.target.value)}
             required
+            style={{ width: '100%', marginBottom: '1rem' }}
           />
           <datalist id="topicList">
-            {topicOptions.map((opt, i) => (
-              <option key={i} value={opt} />
-            ))}
+            {topicOptions.map((opt, i) => <option key={i} value={opt} />)}
           </datalist>
-        </div>
 
-        <div>
-          <label>Description:</label><br />
-          <textarea 
+          <textarea
+            placeholder="Description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             rows={3}
+            style={{ width: '100%', marginBottom: '1rem' }}
           />
-        </div>
 
-        <div>
-          <label>Difficulty:</label><br />
-          <select value={difficulty} onChange={(e) => setDifficulty(e.target.value)} required>
+          <select
+            value={difficulty}
+            onChange={(e) => setDifficulty(e.target.value)}
+            required
+            style={{ width: '100%', marginBottom: '1rem' }}
+          >
             <option value="">Select Difficulty</option>
-            {difficultyOptions.map((opt, i) => (
-              <option key={i} value={opt}>{opt}</option>
-            ))}
+            {difficultyOptions.map((opt, i) => <option key={i} value={opt}>{opt}</option>)}
           </select>
-        </div>
 
-        <div>
-          <label>
+          <label style={{ display: 'block', marginBottom: '1rem' }}>
             <input
               type="checkbox"
               checked={isSolved}
               onChange={(e) => setSolved(e.target.checked)}
             />
-            Solved?
+            {' '}Solved?
           </label>
-        </div>
 
-        <button type="submit">Add Question</button>
-      </form>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <button type="submit">✅ Add</button>
+            <button type="button" onClick={onClose} style={{ backgroundColor: 'gray', color: 'white' }}>
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
 
-export default AddQuestion;
+export default AddQuestionPopup;
