@@ -3,7 +3,7 @@ import { AuthContext } from '../context/AuthContext';
 import api from '../services/api';
 import QuestionCard from '../components/QuestionCard';
 import Navbar from '../components/Navbar';
-import AddQuestionPopup from '../components/AddQuestionPopup'; // this must be created separately
+import AddQuestionPopup from '../components/AddQuestionPopup'; 
 import { useNavigate } from 'react-router-dom';
 
 const Home = () => {

@@ -1,5 +1,6 @@
 import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
+import { Link } from 'react-router-dom'; // ✅ Don't forget to import this
 
 const Navbar = ({ onFilterChange, onAddQuestion, onClearFilters }) => {
   const { logout } = useContext(AuthContext);
@@ -65,6 +66,21 @@ const Navbar = ({ onFilterChange, onAddQuestion, onClearFilters }) => {
         >
           + Add Question
         </button>
+
+        <Link to="/chat">
+          <button
+            style={{
+              backgroundColor: '#2a9d8f',
+              color: 'white',
+              padding: '0.5rem 1rem',
+              border: 'none',
+              borderRadius: '6px',
+              cursor: 'pointer',
+            }}
+          >
+            🌐 Global Chat
+          </button>
+        </Link>
 
         <button
           onClick={logout}
